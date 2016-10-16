@@ -1,0 +1,40 @@
+{
+  "name": "okapi",
+  "version": "0.1.0",
+  "description": "Helper tool for maintain Apigee proxies",
+  "main": "./src/okapi.js",
+  "bin": {
+    "okapi": "./bin/okapi"
+  },
+  "scripts": {
+    "test:jasmine": "jasmine",
+    "test": "npm run test:jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wigahluk/okapi.git"
+  },
+  "author": {
+    "name": "Oscar Ponce",
+    "email": "wigahluk@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Oscar Ponce",
+      "email": "wigahluk@gmail.com"
+    },
+    {
+      "name": "Gabriela Vazquez",
+      "email": "gabs.vz@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wigahluk/okapi/issues"
+  },
+  "homepage": "https://github.com/wigahluk/okapi#readme",
+  "dependencies": {
+    "morral": "^0.1.1",
+    "rxjs": "^5.0.0-rc.1"
+  }
+}

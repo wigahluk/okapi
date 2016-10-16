@@ -1,0 +1,6 @@
+{
+  "name": "okapi_test_proxy",
+  "bundleType": "apiproxy",
+  "sourcePath": "./proxySrc",
+  "buildPath": "./build"
+}
