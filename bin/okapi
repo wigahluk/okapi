@@ -8,11 +8,6 @@ const fs = require('../src/fsrx');
 const cli = require('../src/cli');
 const okapi = require('../src/okapi');
 const rx = require('rxjs');
-// const cli = require('../src/cli');
-// const clean = require('../src/clean');
-// const tester = require('../src/tester');
-// const packager = require('../src/packager');
-// const Conf = require('../src/config');
 const args = process.argv;
 const pwd = process.cwd();
 

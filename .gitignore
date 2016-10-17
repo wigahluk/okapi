@@ -25,6 +25,7 @@ build/Release
 
 # Dependency directories
 jspm_packages
+node_modules
 
 # Optional npm cache directory
 .npm
@@ -38,3 +39,4 @@ jspm_packages
 
 # Build
 *.tgz
+/build
