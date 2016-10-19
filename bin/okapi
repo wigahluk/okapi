@@ -19,8 +19,6 @@ if ( cli.has(args, '-h') || cli.has(args, '--help')) {
         'options:',
         '  --conf              Path to configuration file',
         '  -c --clean          Clean the build folder',
-        // '  -t --test           Run unit tests once',
-        // '  -r --run            Run Webpack Development Server',
         '  -b --build          Build package with Webpack',
         '  -h --help           Print this list and exit.'
     ].join('\n'));
@@ -32,6 +30,14 @@ const processConf = conf => {
     if ( cli.has(args, '-c') || cli.has(args, '--clean')) {
         const fldrName = conf.buildPath;
         okapi.clean(path.resolve(process.cwd(), fldrName));
+        return;
+    }
+    // Build
+    if ( cli.has(args, '-b') || cli.has(args, '--build')) {
+        const source = conf.sourcePath;
+        const dest = `${conf.buildPath}/${conf.name}.zip`;
+        const type = conf.bundleType;
+        okapi.build(source, dest, type);
     }
 };
 
@@ -49,6 +55,9 @@ rx.Observable
     .map(s => {
         const conf = JSON.parse(s);
         conf.buildPath = conf.buildPath || './build';
+        conf.sourcePath = conf.sourcePath || './src';
+        conf.bundleType = conf.bundleType || 'apiproxy';
+        conf.name = conf.name || 'apiproxy';
         return conf;
     })
     .subscribe(
