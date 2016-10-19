@@ -29,15 +29,18 @@ const processConf = conf => {
     // Clean
     if ( cli.has(args, '-c') || cli.has(args, '--clean')) {
         const fldrName = conf.buildPath;
-        okapi.clean(path.resolve(process.cwd(), fldrName));
-        return;
+        return okapi.clean(path.resolve(process.cwd(), fldrName))
+            .map(x => `Folder ${fldrName} has been deleted.`);
     }
     // Build
     if ( cli.has(args, '-b') || cli.has(args, '--build')) {
         const source = conf.sourcePath;
         const dest = `${conf.buildPath}/${conf.name}.zip`;
         const type = conf.bundleType;
-        okapi.build(source, dest, type);
+        return okapi.clean(path.resolve(process.cwd(), conf.buildPath))
+            .catch(oe => rx.Observable.of('error'))
+            .flatMap(x => okapi.build(source, dest, type))
+            .map(x => `Bundle has been generated at ${dest}`);
     }
 };
 
@@ -60,8 +63,9 @@ rx.Observable
         conf.name = conf.name || 'apiproxy';
         return conf;
     })
+    .flatMap(conf => processConf(conf))
     .subscribe(
-        conf => { processConf(conf); },
+        message => { cli.log(message); },
         error => {
             if (error.code === 'ENOENT') {
                 cli.log('Missing configuration file. Create a new file named "okapi.json" at your project root or use conf option: okapi --conf <path to configuration>');

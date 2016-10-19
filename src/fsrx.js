@@ -28,10 +28,12 @@ const deleteRecursive = path => readDir(path)
     .flatMap(p => lstat(p))
     .flatMap(s => {
         if (s.stats.isDirectory()) {
-            return deleteRecursive(s.path).count().flatMap(n => rmdir(s.path));
+            return deleteRecursive(s.path);
         }
         return unlink(s.path);
-    });
+    })
+    .count()
+    .flatMap(n => rmdir(path));
 
 const mkdirR = path => rx.Observable
     .of(path)
