@@ -4,26 +4,11 @@
 'use strict';
 
 const path = require('path');
-const fs = require('../src/fsrx');
 const cli = require('../src/cli');
 const okapi = require('../src/okapi');
 const rx = require('rxjs');
 const args = process.argv;
-const pwd = process.cwd();
-
-// Help
-if ( cli.has(args, '-h') || cli.has(args, '--help')) {
-    console.log([
-        'usage: okapi [options]',
-        '',
-        'options:',
-        '  --conf              Path to configuration file',
-        '  -c --clean          Clean the build folder',
-        '  -b --build          Build package with Webpack',
-        '  -h --help           Print this list and exit.'
-    ].join('\n'));
-    process.exit();
-}
+const cReader = require('../src/conf/reader');
 
 const processConf = conf => {
     // Clean
@@ -42,27 +27,32 @@ const processConf = conf => {
             .flatMap(x => okapi.build(source, dest, type))
             .map(x => `Bundle has been generated at ${dest}`);
     }
+    // Help
+    if ( cli.has(args, '-h') || cli.has(args, '--help')) {
+        console.log([
+            'usage: okapi [options]',
+            '',
+            'options:',
+            '  --conf              Path to configuration file',
+            '  -c --clean          Clean the build folder',
+            '  -b --build          Build package with Webpack',
+            '  --start             Starts the Okapi server. You\'ll need it if you want to use Apigee APIs',
+            '  --stop              Stops the Okapi server',
+            '  --status            Returns the status of the Okapi server',
+            '  -h --help           Print this list and exit'
+        ].join('\n'));
+        return rx.Observable.of('Help');
+    }
+    // Server Status
+    if (cli.has(args, '--status')) { return okapi.status(conf.server.port); }
+    // Start Sever
+    if (cli.has(args, '--start')) { return okapi.start(conf.server); }
+    // Stop Server
+    if (cli.has(args, '--stop')) { return okapi.stop(conf.server.port); }
 };
 
 // Load configuration
-rx.Observable
-    .of('./okapi.json')
-    .map(p => {
-        if (cli.has(args, '--conf')) {
-            return cli.get(args, '--conf');
-        }
-        return p;
-    })
-    .map(p => path.resolve(pwd, p))
-    .flatMap(path => fs.readFile(path, 'utf8'))
-    .map(s => {
-        const conf = JSON.parse(s);
-        conf.buildPath = conf.buildPath || './build';
-        conf.sourcePath = conf.sourcePath || './src';
-        conf.bundleType = conf.bundleType || 'apiproxy';
-        conf.name = conf.name || 'apiproxy';
-        return conf;
-    })
+cReader(args)
     .flatMap(conf => processConf(conf))
     .subscribe(
         message => { cli.log(message); },

@@ -2,5 +2,8 @@
   "name": "okapi_test_proxy",
   "bundleType": "apiproxy",
   "sourcePath": "./demo/src",
-  "buildPath": "./demo/build"
+  "buildPath": "./demo/build",
+  "server": {
+    "port": 8989
+  }
 }

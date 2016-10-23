@@ -1,6 +1,9 @@
 const rx = require('rxjs');
 const fsrx = require('./fsrx');
 const JSZip = require("jszip");
+const serverStatus = require('./server/status');
+const serverStop = require('./server/stop');
+const serverLauncher = require('./server/launcher');
 
 const clean = path => fsrx.exists(path)
     .flatMap(p => fsrx.rmrf(p));
@@ -39,7 +42,16 @@ const build = (source, dest, type) => fsrx.exists(source)
     .flatMap(zip => enforceBuildPath(dest).count().map(x => zip))
     .flatMap(zip => saveZip(zip, dest));
 
+const status = port => serverStatus(port);
+
+const start = conf => enforceBuildPath('logs/').count().flatMap(x => serverLauncher(conf));
+
+const stop = port => serverStop(port);
+
 module.exports = {
     clean: clean,
-    build: build
+    build: build,
+    status: status,
+    start: start,
+    stop: stop
 };
