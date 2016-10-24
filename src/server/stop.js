@@ -5,7 +5,7 @@ const stop = port => {
     const options = {
         hostname: 'localhost',
         port: port,
-        path: '/kill',
+        path: '/stop-server',
         method: 'GET'
     };
     return http.request(options).catch(error => {

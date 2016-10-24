@@ -1,5 +1,6 @@
 const defServer = {
-    port: 8989
+    port: 8989,
+    ssoEndpoint: 'login.apigee.com'
 };
 
 const validate = s => {
@@ -10,6 +11,7 @@ const validate = s => {
     conf.name = conf.name || 'apiproxy';
     conf.server = conf.server || defServer;
     conf.server.port = conf.server.port || defServer.port;
+    conf.server.ssoEndpoint = conf.server.ssoEndpoint || defServer.ssoEndpoint;
     return conf;
 };
 

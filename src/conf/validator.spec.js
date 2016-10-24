@@ -8,5 +8,6 @@ describe('Conf Vamlidator', () => {
         expect(c.bundleType).toBe('apiproxy');
         expect(c.name).toBe('apiproxy');
         expect(c.server.port).toBe(8989);
+        expect(c.server.ssoEndpoint).toBe('login.apigee.com');
     })
 });

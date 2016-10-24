@@ -1,8 +1,9 @@
 const rx = require('rxjs');
 const http = require('http');
+const https = require('https');
 
-const request = options => new rx.Observable(obs => {
-    const req = http.request(options, resp => {
+const request = httpClient => (options, data) => new rx.Observable(obs => {
+    const req = httpClient.request(options, resp => {
         resp.setEncoding('utf8');
         resp.on('data', chunk => {
             obs.next(chunk);
@@ -16,11 +17,17 @@ const request = options => new rx.Observable(obs => {
     });
     req.on('error', er => {
         obs.error(er);
+        obs.complete();
     });
+    if (data && options.method === 'POST') {
+        req.write(data);
+    }
 
     req.end();
 });
 
 module.exports = {
-    request: request
+    request: request(http),
+    secureRequest: request(https),
+    createServer: http.createServer
 };
