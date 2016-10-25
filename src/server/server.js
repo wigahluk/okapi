@@ -32,22 +32,20 @@ const startServer = (port, ssoEndpoint) => {
             const query = queryTool.parse(urlTool.parse(url).query);
             state.authenticate(query.user, query.pwd, query.mfa)
                 .subscribe(
-                    data => {
-                        res.end('You are now authenticated');
-                    },
+                    data => { res.end('You are now authenticated'); },
                     e => {
                         console.log('Error during authentication: ' + JSON.stringify(e));
                         res.end(`We got an error: ${e.error}\n`);
                     },
-                    () => {
-                        res.end('End\n');
-                    }
+                    () => { res.end('End\n'); }
                 );
             return;
         }
         // Proxy calls
         if (url.indexOf('/organizations') === 0) {
-            state.getToken().map();
+            state.getToken().subscribe(token => {
+                http.secureProxy(req, res, 'api.enterprise.apigee.com', '/v1', token);
+            });
             return;
         }
 

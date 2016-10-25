@@ -26,8 +26,43 @@ const request = httpClient => (options, data) => new rx.Observable(obs => {
     req.end();
 });
 
+const proxy = httpClient => (req, res, endpoint, basePath, token) => {
+    const headers = req.headers;
+    headers['Authorization'] = `Bearer ${token}`;
+    headers['host'] = endpoint;
+
+    const opts = {
+        hostname: endpoint,
+        port: 443,
+        path: basePath + req.url,
+        method: req.method,
+        headers: headers
+    };
+
+    const proxyRequest = httpClient.request(opts, proxyResponse => {
+        proxyResponse.on('data', chunk => {
+            res.write(chunk, 'binary');
+        });
+        proxyResponse.on('end', () => {
+            res.end()
+        });
+        proxyResponse.on('error', er => {
+            throw new Error('Error processing response: ' + er.message);
+        });
+        res.writeHead(proxyResponse.statusCode, proxyResponse.headers);
+    });
+    req.on('data', function(chunk) {
+        proxyRequest.write(chunk, 'binary');
+    });
+    req.on('end', function() {
+        proxyRequest.end();
+    });
+};
+
 module.exports = {
     request: request(http),
     secureRequest: request(https),
-    createServer: http.createServer
+    createServer: http.createServer,
+    proxy: proxy(http),
+    secureProxy: proxy(https)
 };
