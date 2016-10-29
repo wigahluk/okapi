@@ -27,6 +27,20 @@ const processConf = conf => {
             .flatMap(x => okapi.build(source, dest, type))
             .map(x => `Bundle has been generated at ${dest}`);
     }
+    // Upload
+    if ( cli.has(args, '-l') || cli.has(args, '--upload')) {
+        const source = conf.sourcePath;
+        const type = conf.bundleType;
+        return okapi.upload(conf.server.port)(source, type)
+            .map(n => `Bundle has been Uploaded at revision ${n}`);
+    }
+    // Deploy
+    // if ( cli.has(args, '-d') || cli.has(args, '--deploy')) {
+    //     const type = conf.bundleType;
+    //     const r = cli.get(args, '-d') || cli.get(args, '-deploy');
+    //     return okapi.deploy(path.resolve(process.cwd(), conf.buildPath), type, r)
+    //         .map(x => `Revision ${r} has been deployed.`);
+    // }
     // Help
     if ( cli.has(args, '-h') || cli.has(args, '--help')) {
         console.log([
@@ -36,9 +50,12 @@ const processConf = conf => {
             '  --conf              Path to configuration file',
             '  -c --clean          Clean the build folder',
             '  -b --build          Build package with Webpack',
+            '  -l --upload         Uploads a revision',
+            // '  -d --deploy         Deploys a revision',
             '  --start             Starts the Okapi server. You\'ll need it if you want to use Apigee APIs',
             '  --stop              Stops the Okapi server',
             '  --status            Returns the status of the Okapi server',
+            '  --auth              Authenticate to the Okapi server',
             '  -h --help           Print this list and exit'
         ].join('\n'));
         return rx.Observable.of('Help');
@@ -49,6 +66,18 @@ const processConf = conf => {
     if (cli.has(args, '--start')) { return okapi.start(conf.server); }
     // Stop Server
     if (cli.has(args, '--stop')) { return okapi.stop(conf.server.port); }
+    // Auth Server
+    if (cli.has(args, '--auth')) {
+        const auth = okapi.authenticate(conf.server.port);
+        const u = cli.get(args, '-u');
+        const p = cli.get(args, '-p');
+        const m = cli.get(args, '-m');
+        if(!u || !p) {
+            console.log('usage: okapi -u <user> -p <password> [-m <mfa>]');
+            return rx.Observable.of('Auth Usage');
+        }
+        return auth(u, p, m);
+    }
 };
 
 // Load configuration

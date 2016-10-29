@@ -1,6 +1,8 @@
 const defServer = {
     port: 8989,
-    ssoEndpoint: 'login.apigee.com'
+    ssoEndpoint: 'login.apigee.com',
+    apigeeEndpoint: 'api.enterprise.apigee.com',
+    basePath: '/v1'
 };
 
 const validate = s => {
@@ -12,6 +14,8 @@ const validate = s => {
     conf.server = conf.server || defServer;
     conf.server.port = conf.server.port || defServer.port;
     conf.server.ssoEndpoint = conf.server.ssoEndpoint || defServer.ssoEndpoint;
+    conf.server.apigeeEndpoint = conf.server.apigeeEndpoint || defServer.apigeeEndpoint;
+    conf.server.basePath = conf.server.basePath || defServer.basePath;
     return conf;
 };
 

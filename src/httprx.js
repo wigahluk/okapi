@@ -2,7 +2,7 @@ const rx = require('rxjs');
 const http = require('http');
 const https = require('https');
 
-const request = httpClient => (options, data) => new rx.Observable(obs => {
+const request = httpClient => (options, data, isBinary) => new rx.Observable(obs => {
     const req = httpClient.request(options, resp => {
         resp.setEncoding('utf8');
         resp.on('data', chunk => {
@@ -20,10 +20,23 @@ const request = httpClient => (options, data) => new rx.Observable(obs => {
         obs.complete();
     });
     if (data && options.method === 'POST') {
-        req.write(data);
+        if (!isBinary) {
+            req.write(data);
+            req.end();
+        } else {
+            data.pipe(req)
+                .on('error', error => {
+                    consoe.log(error);
+                })
+                .on('finish', () => {
+                    req.end();
+                });
+        }
+    } else {
+        req.end();
     }
 
-    req.end();
+
 });
 
 const proxy = httpClient => (req, res, endpoint, basePath, token) => {

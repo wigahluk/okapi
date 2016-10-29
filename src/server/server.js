@@ -5,13 +5,13 @@ const session = require('./jwtSession');
 const http = require('../httprx');
 
 const stateMessage = state => {
-    if (state === 'empty' || state === 'expired') {
-        return 'Server is running but not authenticated';
+    if (state === 'ready') {
+        return 'Server is ready';
     }
-    return 'Server is ready';
+    return 'Server is running but not authenticated';
 };
 
-const startServer = (port, ssoEndpoint) => {
+const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
     // Keep the state in an object
     const state = session(http.secureRequest, ssoEndpoint);
 
@@ -24,7 +24,7 @@ const startServer = (port, ssoEndpoint) => {
             return;
         }
         if (url.indexOf('/status') === 0) {
-            res.end(stateMessage(state.status));
+            res.end(stateMessage(state.status()));
             return;
         }
         // Authenticate
@@ -43,9 +43,14 @@ const startServer = (port, ssoEndpoint) => {
         }
         // Proxy calls
         if (url.indexOf('/organizations') === 0) {
-            state.getToken().subscribe(token => {
-                http.secureProxy(req, res, 'api.enterprise.apigee.com', '/v1', token);
-            });
+            state.getToken().subscribe(
+                token => {
+                    http.secureProxy(req, res, apigeeEndpoint, basePath, token);
+                },
+                error => {
+                    res.end(`Error: ${error.message}\n`);
+                }
+            );
             return;
         }
 
