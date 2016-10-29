@@ -1,5 +1,5 @@
 {
-  "name": "okapi",
+  "name": "okapipack",
   "version": "0.1.0",
   "description": "Helper tool for maintain Apigee proxies",
   "main": "./src/okapi.js",

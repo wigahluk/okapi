@@ -10,7 +10,7 @@ A reactive tool for handling common tasks during Apigee Proxy Bundles developmen
 Install it with NPM:
 
 ```bash
-$ npm install okapi
+$ npm install okapipack
 ```
 
 Configuration file is named `okapi.json` by default and its minimum setup is:
