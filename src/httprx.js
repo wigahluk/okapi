@@ -35,8 +35,6 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
     } else {
         req.end();
     }
-
-
 });
 
 const proxy = httpClient => (req, res, endpoint, basePath, token) => {

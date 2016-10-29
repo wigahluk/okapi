@@ -40,4 +40,4 @@ node_modules
 # Build
 *.tgz
 /build
-/demo
+/demo/build

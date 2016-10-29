@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="EmptyProxy">
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <Description/>
+    <DisplayName>EmptyProxy</DisplayName>
+    <Policies/>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources/>
+    <TargetServers/>
+    <TargetEndpoints/>
+</APIProxy>
