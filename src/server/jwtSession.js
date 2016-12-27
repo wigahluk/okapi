@@ -5,7 +5,7 @@ const decode64 = s => Buffer.from(s, 'base64').toString();
 const isJwtExpired = token => {
     if (!token) { return true; }
     const parts = token.split('.');
-    if (parts !== 3) { return true; }
+    if (parts.length !== 3) { return true; }
     const exp = Number(JSON.parse(decode64(parts[1])).exp) * 1000;
     return exp < (new Date().valueOf() - 1000);
 };

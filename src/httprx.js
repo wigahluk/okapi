@@ -38,6 +38,7 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
 });
 
 const proxy = httpClient => (req, res, endpoint, basePath, token) => {
+    const start = new Date().valueOf();
     const headers = req.headers;
     headers['Authorization'] = `Bearer ${token}`;
     headers['host'] = endpoint;
@@ -51,16 +52,19 @@ const proxy = httpClient => (req, res, endpoint, basePath, token) => {
     };
 
     const proxyRequest = httpClient.request(opts, proxyResponse => {
+        const startResp = new Date().valueOf();
         proxyResponse.on('data', chunk => {
             res.write(chunk, 'binary');
         });
         proxyResponse.on('end', () => {
-            res.end()
+            res.end();
         });
         proxyResponse.on('error', er => {
             throw new Error('Error processing response: ' + er.message);
         });
-        res.writeHead(proxyResponse.statusCode, proxyResponse.headers);
+        const rHeaders = proxyResponse.headers;
+        rHeaders['X-Okapi-TargeResponseDuration'] = `${startResp - start}ms`;
+        res.writeHead(proxyResponse.statusCode, rHeaders);
     });
     req.on('data', function(chunk) {
         proxyRequest.write(chunk, 'binary');

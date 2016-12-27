@@ -92,14 +92,21 @@ const processConf = conf => {
     // Auth Server
     if (cli.has(args, '--auth')) {
         const auth = okapi.authenticate(conf.server.port);
+
+        const e = !!cli.has(args, '-e');
+        if(e) {
+            cli.log('Using credentials from environment variables');
+        }
+
         const u = cli.get(args, '-u');
         const p = cli.get(args, '-p');
         const m = cli.get(args, '-m');
+
         if(!u || !p) {
-            console.log('usage: okapi -u <user> -p <password> [-m <mfa>]');
-            return rx.Observable.of('Auth Usage');
+            cli.log('Please provide your credentials (or variable names).\n' +
+                ' You can also use: okapi --auth -u <user> -p <password> [-m <mfa>]');
         }
-        return auth(u, p, m);
+        return auth((e ? process.env[u] : u), (e ? process.env[p] : p), m);
     }
 };
 

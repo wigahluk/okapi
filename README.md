@@ -46,7 +46,7 @@ are the ones shown in the example above.
 * `--start` Start the Okapi Server.
 * `--stop` Stop the Okapi Server.
 * `--status` Return the current status of the Okapi Server.
-* `--auth` `-u <user> -p <password> -m <MFA code>` Authenticate the Okapi Server.
+* `--auth` `-u <user> -p <password> -m <MFA code> [-e]` Authenticate the Okapi Server.
 
 ### Folder conventions
 
@@ -110,12 +110,37 @@ on every call.
 
 You can think of it as a Cookie Session keeper for curl calls.
 
-At this point only paths as `/organizations/...` are supported by **Okapi Server**. 
+Start the server:
 
-Once the server is launched, its process will stay running until you stop it. You can
-stop the server using okapi commands or invoking its `/stop-server` URL.
+```bash
+$ okapi --start
+```
 
-**Impotrtant!** Do not use Okapi Server as a public server or in production environments.
+Stop the server:
+
+```bash
+$ okapi --stop
+```
+
+Check the status the server:
+
+```bash
+$ okapi --status
+```
+
+Authenticate the server:
+
+```bash
+$ okapi --auth [-u <user> -p <password> -m <MFA code>] [-e]
+```
+
+If you don't provide any argument, okapi will ask you for your credentials. If you have MFA
+enabled in your account, use `-m` to provide your code. If you want to use environment variables for
+your credentials, add the parameter `-e` with no arguments, the values of `-u` and `-p` will be 
+used as the names of the environment variables.
+
+**Important!** Do not use Okapi Server as a public server or in production environments.
+
 
 ## Why another Apigee bundle tool?
 

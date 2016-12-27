@@ -16,15 +16,25 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
     const state = session(http.secureRequest, ssoEndpoint);
 
     const server = http.createServer((req, res) => {
-        // Terminate server on `/kill` path:
         const url = req.url;
+        // Terminate server on `/kill` path:
         if (url.indexOf('/stop-server') === 0) {
             res.end(`Server at port: ${port} was terminated at ${new Date().toISOString()}`);
             server.close();
+            process.exit();
             return;
         }
+        // Server status
         if (url.indexOf('/status') === 0) {
             res.end(stateMessage(state.status()));
+            return;
+        }
+        // Token
+        if (url.indexOf('/token') === 0) {
+            state.getToken().subscribe(
+                data => { res.end(data); },
+                error => { res.end(error); }
+            );
             return;
         }
         // Authenticate
@@ -36,13 +46,14 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
                     e => {
                         console.log('Error during authentication: ' + JSON.stringify(e));
                         res.end(`We got an error: ${e.error}\n`);
-                    },
-                    () => { res.end('End\n'); }
+                    }
                 );
             return;
         }
         // Proxy calls
-        if (url.indexOf('/organizations') === 0) {
+        if (url.indexOf('/api') === 0) {
+            // Remove /api from url
+            req.url = url.substr('/api'.length);
             state.getToken().subscribe(
                 token => {
                     http.secureProxy(req, res, apigeeEndpoint, basePath, token);
@@ -54,7 +65,7 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
             return;
         }
 
-        res.end('Hello server');
+        res.end('404');
     });
     server.listen(port);
 };
