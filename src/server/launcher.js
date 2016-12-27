@@ -1,6 +1,9 @@
 const rx = require('rxjs');
 const cp = require('child_process');
 const fs = require('fs');
+const path = require('path');
+
+const sPath = path.dirname(__filename);
 
 const launch = conf => {
     const out = fs.openSync('./logs/out.log', 'a');
@@ -8,7 +11,7 @@ const launch = conf => {
     const child = cp.spawn(
         'node',
         [
-            './src/server/main.js',
+            sPath + '/main.js',
             '-p', conf.port,
             '--sso', conf.ssoEndpoint,
             '--api', conf.apigeeEndpoint,

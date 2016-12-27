@@ -1,6 +1,6 @@
 {
   "name": "okapipack",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Helper tool for maintain Apigee proxies",
   "main": "./src/okapi.js",
   "bin": {
