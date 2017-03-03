@@ -100,7 +100,7 @@ const processConf = conf => {
 
         const u = cli.get(args, '-u');
         const p = cli.get(args, '-p');
-        const m = cli.get(args, '-m');
+        const m = cli.get(args, '-m') || (e ? '_environment': undefined);
 
         if(!u || !p) {
             cli.log('Please provide your credentials (or variable names).\n' +

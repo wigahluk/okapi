@@ -40,6 +40,8 @@ const auth = port => (user, pwd, mfa) => {
             return rx.Observable.of(conf);
         })
         .map(conf => {
+            // Remove MFA it it was set by the CLI tool.
+            if (conf.mfa === '_environment') { conf.mfa = undefined; }
             return {
                 hostname: 'localhost',
                 port: conf.port,
