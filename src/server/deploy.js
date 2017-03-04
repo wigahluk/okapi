@@ -5,7 +5,7 @@ const deploy = (port, org, proxyName, environment, revision) => {
     const options = {
         hostname: 'localhost',
         port: port,
-        path: `/organizations/${org}/environments/${environment}/apis/${proxyName}/revisions/${revision}/deployments?override=true`,
+        path: `/api/organizations/${org}/environments/${environment}/apis/${proxyName}/revisions/${revision}/deployments?override=true`,
         method: 'POST',
         headers: {
             'content-type': 'application/x-www-form-urlencoded'

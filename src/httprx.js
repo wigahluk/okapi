@@ -26,7 +26,7 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
         } else {
             data.pipe(req)
                 .on('error', error => {
-                    consoe.log(error);
+                    console.log(error);
                 })
                 .on('finish', () => {
                     req.end();

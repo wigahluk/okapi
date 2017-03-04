@@ -5,7 +5,7 @@ const upload = (port, org, proxyName, bundle) => {
     const options = {
         hostname: 'localhost',
         port: port,
-        path: `/organizations/${org}/apis/?action=import&name=${proxyName}`,
+        path: `/api/organizations/${org}/apis/?action=import&name=${proxyName}`,
         method: 'POST',
         headers: {
             'content-type': 'application/octet-stream'
