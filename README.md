@@ -42,6 +42,7 @@ are the ones shown in the example above.
 * `--conf <path>` Path to configuration file if you don't want to use the default name and path.
 * `-l` `--upload` `[-o <organization>]` Build and upload the bundled proxy. It will not emit any file in the local file system.
 * `-d` `--deploy` `<revision>` `[-o <organization> -e <environment>]` Deploy the specific revision of the current proxy in the given environment in the given org.
+* `-p` `--publish` `[-o <organization> -e <environment>]` Uploads and deploy a new revision of the current proxy in the given environment in the given org.
 * `-b` `--build` Emits a bundle file (ZIP) for the proxy.
 * `--start` Start the Okapi Server.
 * `--stop` Stop the Okapi Server.

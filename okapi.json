@@ -3,6 +3,8 @@
   "bundleType": "apiproxy",
   "sourcePath": "./demo/src",
   "buildPath": "./demo/build",
+  "defaultOrg": "opb",
+  "defaultEnvironment": "prod",
   "server": {
     "port": 8989
   }
