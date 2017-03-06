@@ -65,7 +65,7 @@ const processConf = conf => {
             .catch(error => rx.Observable.of(`An Error occurred: ${error.message}`));
     }
     // Uploads and deploys
-    if ( cli.has(args, '-p') || cli.has(args, '--publish')) {
+    if ( cli.has(args, '--publish')) {
         const source = conf.sourcePath;
         const type = conf.bundleType;
         const name = conf.name;
@@ -90,7 +90,7 @@ const processConf = conf => {
             '  -b --build          Build package with Webpack',
             '  -l --upload         Uploads a revision',
             '  -d --deploy         Deploys a revision',
-            '  -p --publish        Uploads and deploys a revision',
+            '  --publish        Uploads and deploys a revision',
             '  --start             Starts the Okapi server. You\'ll need it if you want to use Apigee APIs',
             '  --stop              Stops the Okapi server',
             '  --status            Returns the status of the Okapi server',
