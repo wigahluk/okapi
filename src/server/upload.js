@@ -13,7 +13,7 @@ const upload = (port, org, proxyName, bundle) => {
     };
     return http.request(options, bundle, true).catch(error => {
         if (error.code === 'ECONNREFUSED') {
-            return rx.Observable.of(`Server is not running at port ${port}.`);
+            return rx.Observable.throw(`Server is not running at port ${port}.`);
         }
         return rx.Observable.throw(error);
     }).map(r => JSON.parse(r))

@@ -4,6 +4,9 @@ const https = require('https');
 
 const request = httpClient => (options, data, isBinary) => new rx.Observable(obs => {
     const req = httpClient.request(options, resp => {
+        if (resp.statusCode > 399) {
+            throw new Error(`Request failed: ${resp.statusCode} ${resp.statusMessage}`);
+        }
         resp.setEncoding('utf8');
         resp.on('data', chunk => {
             obs.next(chunk);
@@ -12,12 +15,11 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
             obs.complete();
         });
         resp.on('error', er => {
-            obs.error(er);
+            throw new Error(`Request failed: ${er.message}`);
         });
     });
     req.on('error', er => {
-        obs.error(er);
-        obs.complete();
+        throw new Error(`Request failed: ${er.message}`);
     });
     if (data && options.method === 'POST') {
         if (!isBinary) {
@@ -26,7 +28,7 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
         } else {
             data.pipe(req)
                 .on('error', error => {
-                    console.log(error);
+                    throw new Error(`Request failed: ${er.message}`);
                 })
                 .on('finish', () => {
                     req.end();
