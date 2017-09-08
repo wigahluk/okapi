@@ -1,19 +1,10 @@
-const rx = require('rxjs');
 const http = require('../httprx');
 
-const stop = port => {
-    const options = {
-        hostname: 'localhost',
-        port: port,
-        path: '/stop-server',
-        method: 'GET'
-    };
-    return http.request(options).catch(error => {
-        if (error.code === 'ECONNREFUSED') {
-            return rx.Observable.of(`Server is not running at port ${port}.`);
-        }
-        return rx.Observable.throw(error);
-    });
-};
+const stop = port => http.request({
+    hostname: 'localhost',
+    port: port,
+    path: '/stop-server',
+    method: 'GET'
+});
 
 module.exports = stop;

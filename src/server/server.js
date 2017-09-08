@@ -21,7 +21,7 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
         if (url.indexOf('/stop-server') === 0) {
             res.end(`Server at port: ${port} was terminated at ${new Date().toISOString()}`);
             server.close();
-            process.exit();
+            process.exit(0);
             return;
         }
         // Server status
@@ -33,7 +33,7 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
         if (url.indexOf('/token') === 0) {
             state.getToken().subscribe(
                 data => { res.end(data); },
-                error => { res.end(error); }
+                error => { res.statusCode = 500; res.end(error.message); }
             );
             return;
         }
@@ -42,10 +42,11 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
             const query = queryTool.parse(urlTool.parse(url).query);
             state.authenticate(query.user, query.pwd, query.mfa)
                 .subscribe(
-                    data => { res.end('You are now authenticated'); },
-                    e => {
-                        console.log('Error during authentication: ' + JSON.stringify(e));
-                        res.end(`We got an error: ${e.error}\n`);
+                    _ => { res.end('You are now authenticated'); },
+                    error => {
+                        console.log('Error during authentication: ' + JSON.stringify(error));
+                        res.statusCode = 401;
+                        res.end(`We got an error: ${error.error}\n`);
                     }
                 );
             return;
@@ -59,13 +60,14 @@ const startServer = (port, ssoEndpoint, apigeeEndpoint, basePath) => {
                     http.secureProxy(req, res, apigeeEndpoint, basePath, token);
                 },
                 error => {
-                    res.end(`Error: ${error.message}\n`);
+                    res.statusCode = 500;
+                    res.end(error.message);
                 }
             );
             return;
         }
-
-        res.end('404');
+        res.statusCode = 404;
+        res.end();
     });
     server.listen(port);
 };
