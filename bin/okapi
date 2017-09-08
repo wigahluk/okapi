@@ -126,17 +126,24 @@ const processConf = conf => {
     }
 };
 
+const knownErrors = {
+    'ENOENT': 'Missing configuration file. Create a new file named "okapi.json" at your project root or use conf option: okapi --conf <path to configuration>',
+    'ECONNREFUSED': 'It seems that Okapi Server is not running. Try using: "okapi --start" to start the server',
+    'UNKNOWN': 'An unknown error happened.'
+};
+
 // Load configuration
 cReader(args)
     .flatMap(conf => processConf(conf))
     .subscribe(
         message => { cli.log(message); },
         error => {
-            if (error.code === 'ENOENT') {
-                cli.log('Missing configuration file. Create a new file named "okapi.json" at your project root or use conf option: okapi --conf <path to configuration>');
-            } else {
-                throw error;
+            const errorCode = error.code ? error.code : 'UNKNOWN';
+            const errorMessage = knownErrors[errorCode];
+            cli.log(errorMessage);
+            if(errorMessage === 'UNKNOWN') {
+                cli.log(error.message || error.toString());
             }
-
+            process.exit(1);
         }
     );

@@ -5,7 +5,9 @@ const https = require('https');
 const request = httpClient => (options, data, isBinary) => new rx.Observable(obs => {
     const req = httpClient.request(options, resp => {
         if (resp.statusCode > 399) {
-            throw new Error(`Request failed: ${resp.statusCode} ${resp.statusMessage}`);
+            obs.error(
+                new Error(`Request failed with status code: ${resp.statusCode} and response: ${resp.statusMessage}`));
+            return;
         }
         resp.setEncoding('utf8');
         resp.on('data', chunk => {
@@ -14,12 +16,12 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
         resp.on('end', () => {
             obs.complete();
         });
-        resp.on('error', er => {
-            throw new Error(`Request failed: ${er.message}`);
+        resp.on('error', error => {
+            obs.error(error);
         });
     });
-    req.on('error', er => {
-        throw new Error(`Request failed: ${er.message}`);
+    req.on('error', error => {
+        obs.error(error);
     });
     if (data && options.method === 'POST') {
         if (!isBinary) {
@@ -28,7 +30,7 @@ const request = httpClient => (options, data, isBinary) => new rx.Observable(obs
         } else {
             data.pipe(req)
                 .on('error', error => {
-                    throw new Error(`Request failed: ${er.message}`);
+                    obs.error(error)
                 })
                 .on('finish', () => {
                     req.end();
@@ -61,8 +63,8 @@ const proxy = httpClient => (req, res, endpoint, basePath, token) => {
         proxyResponse.on('end', () => {
             res.end();
         });
-        proxyResponse.on('error', er => {
-            throw new Error('Error processing response: ' + er.message);
+        proxyResponse.on('error', error => {
+            throw new Error('Error processing response: ' + error.message);
         });
         const rHeaders = proxyResponse.headers;
         rHeaders['X-Okapi-TargeResponseDuration'] = `${startResp - start}ms`;

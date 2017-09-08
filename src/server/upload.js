@@ -1,4 +1,3 @@
-const rx = require('rxjs');
 const http = require('../httprx');
 
 const upload = (port, org, proxyName, bundle) => {
@@ -11,13 +10,9 @@ const upload = (port, org, proxyName, bundle) => {
             'content-type': 'application/octet-stream'
         }
     };
-    return http.request(options, bundle, true).catch(error => {
-        if (error.code === 'ECONNREFUSED') {
-            return rx.Observable.throw(`Server is not running at port ${port}.`);
-        }
-        return rx.Observable.throw(error);
-    }).map(r => JSON.parse(r))
-        .map(r => r.revision);
+    return http.request(options, bundle, true)
+        .map(response => JSON.parse(response))
+        .map(proxyRevision => proxyRevision.revision);
 };
 
 module.exports = upload;
